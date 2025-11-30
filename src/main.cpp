@@ -6,22 +6,66 @@
 */
 
 #include "Color.h"
+#include "Ray.h"
 #include "Vec3.h"
 
 #include <iostream>
 
+/*
+get a ray color for the specified Ray object you want
+
+input:
+    r: a reference to a Ray object
+
+output:
+    the ray's color
+*/
+Color ray_color(const Ray& r){
+    Vec3 unit_direction = unit_vector(r.direction());
+    double a = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
+}
+
 int main(){
-    //image dimentions
-    int image_width = 256;
-    int image_height = 256;
+    //image
+    double aspect_ratio = 16.0 / 9.0;
+    int image_width = 400;
+
+    //calculate image height depending on desired aspect ratio
+    int image_height = int(image_width / aspect_ratio);
+    image_height = (image_height < 1) ? 1 : image_height; 
+
+    //camera
+    double focal_length = 1.0;
+    double viewport_height = 2.0;
+    double viewport_width = viewport_height * 
+        (double(image_width) / image_height);
+    Point3 camera_center = Point3(0, 0, 0);
+
+    //vectors accross horizontal and vertical viewport edges
+    Vec3 viewport_u = Vec3(viewport_width, 0, 0);
+    Vec3 viewport_v = Vec3(0, -viewport_height, 0);
+
+    //delta values for change in vector from pixel to pixel
+    Vec3 pixel_delta_u = viewport_u / image_width;
+    Vec3 pixel_delta_v = viewport_v / image_height;
+
+    //find location of top left pixel (the start of the viewport)
+    Vec3 viewport_upper_left = camera_center - Vec3(0, 0, focal_length) - 
+        (viewport_u / 2) - (viewport_v / 2);
+    Vec3 pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + 
+        pixel_delta_v);
 
     //rendering
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     for(int h = 0; h < image_height; h++){
         for(int w = 0; w < image_width; w++){
-            Color pixel_color = Color(double(w) / (image_width - 1), 
-                double(h) / (image_height - 1), 0);
+            Vec3 pixel_center = pixel00_loc + (w * pixel_delta_u) + (h * 
+                pixel_delta_v);
+            Vec3 ray_direction = pixel_center - camera_center;
+            Ray r = Ray(camera_center, ray_direction);
+            Color pixel_color = ray_color(r);
             write_color(std::cout, pixel_color);
         }
     }
