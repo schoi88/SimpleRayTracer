@@ -1,5 +1,5 @@
 /**
- * This is the color header file, it defines a utility function
+ * This is the Color header file, it defines a utility function
  * that writes a single pixel's color to standard out stream.
 */
 #ifndef COLOR_H

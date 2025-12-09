@@ -21,7 +21,7 @@ input:
     r: the ray of light from camera location
 
 output:
-    the resulting value if r is intersecting or is tangent to the area of the 
+    The resulting value if r is intersecting or is tangent to the area of the 
     sphere determined using quadratic formula. When discriminant is greater than
     1 there is an intersection with the sphere object, 0 for when there is a 
     point of tangency, or negative signifying no intersection.

@@ -10,7 +10,7 @@
 
 class Vec3{
     public:
-        //the array of values
+        //the array of vector values
         double e[3];
 
         //constructors
@@ -54,7 +54,7 @@ class Vec3{
             v: the vector whose values are being added
 
         output:
-            the reference of the vector after adding values from v
+            The reference of the vector after adding values from v.
         */
         Vec3& operator+=(const Vec3& v){
             e[0] += v.e[0];
@@ -70,7 +70,7 @@ class Vec3{
             t: the scalar
         
         output:
-            the reference of the product of the multiplication
+            The reference of the product of the multiplication.
         */
         Vec3& operator*=(double t){
             e[0] *= t;
@@ -86,7 +86,7 @@ class Vec3{
             t: the scalar
         
         output:
-            the reference of the vector after magnitude is reduced by scalar
+            The reference of the vector after magnitude is reduced by scalar.
         */
         Vec3& operator/=(double t){
             return *this *= (1 / t);
@@ -116,7 +116,7 @@ input:
     v: the vector
 
 output:
-    an output stream with values from v
+    An output stream with values from v.
 */
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v){
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
@@ -130,7 +130,7 @@ input:
     v: another vector
 
 output:
-    a new vector that is the sum of u and v
+    A new vector that is the sum of u and v.
 */
 inline Vec3 operator+(const Vec3& u, const Vec3& v){
     return Vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
@@ -144,7 +144,7 @@ input:
     v: the vector containing the values being subtracted
 
 output:
-    a new vector that is the difference of u by v
+    A new vector that is the difference of u by v.
 */
 inline Vec3 operator-(const Vec3& u, const Vec3& v){
     return Vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
@@ -158,7 +158,7 @@ input:
     v: another vector
 
 output:
-    a new vector whose values are the product of u and v
+    A new vector whose values are the product of u and v.
 */
 inline Vec3 operator*(const Vec3& u, const Vec3& v){
     return Vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
@@ -172,7 +172,7 @@ input:
     v: the vector
 
 output:
-    a new vector whose values are v multiplied by t
+    A new vector whose values are v multiplied by t.
 */
 inline Vec3 operator*(double t, const Vec3& v){
     return Vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
@@ -191,7 +191,7 @@ input:
     t: the scalar
 
 output:
-    the vector v scaled down by t
+    The vector v scaled down by t.
 */
 inline Vec3 operator/(const Vec3& v, double t){
     return (1 / t) * v;
@@ -205,7 +205,7 @@ input:
     v: the vector u is dotted by
 
 output:
-    the vector u dotted by v
+    The vector u dotted by v.
 */
 inline double dot(const Vec3& u, const Vec3& v){
     return u.e[0] * v.e[0]
@@ -221,7 +221,7 @@ input:
     v: another vector
 
 output:
-    a new vector that is perpendicular to u and v
+    A new vector that is perpendicular to u and v.
 */
 inline Vec3 cross(const Vec3& u, const Vec3& v){
     return Vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
