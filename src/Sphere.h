@@ -40,8 +40,7 @@ class Sphere : public Hittable{
             within acceptable interval) or false if no hit is detected 
             (discriminant < 0).
         */
-        bool hit(const Ray& r, double ray_tmin, double ray_tmax, HitRecord& rec) 
-                 const override{
+        bool hit(const Ray& r, Interval ray_t, HitRecord& rec) const override{
             //values for quadratic formula to find ray intersections
             Vec3 oc = center - r.origin();
             double a = r.direction().lengthSquared();
@@ -63,9 +62,9 @@ class Sphere : public Hittable{
 
             //find nearest root (t) that is within the acceptable range
             double root = (h - sqrt_discriminant) / a;
-            if(root <= ray_tmin || root >= ray_tmax){
+            if(!ray_t.surrounds(root)){
                 root = (h + sqrt_discriminant) / a;
-                if(root <= ray_tmin || root >= ray_tmax){
+                if(!ray_t.surrounds(root)){
                     return false;
                 }
             }

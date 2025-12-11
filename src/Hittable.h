@@ -6,6 +6,7 @@
 #define HITTABLE_H
 
 #include "Ray.h"
+#include "Interval.h"
 
 //record object to hold hit data for a ray
 class HitRecord{
@@ -65,8 +66,7 @@ class Hittable{
             within acceptable interval) or false if no hit is detected 
             (discriminant < 0).
         */
-        virtual bool hit(const Ray& r, double ray_tmin, double ray_tmax, 
-                         HitRecord& rec) const = 0;    
+        virtual bool hit(const Ray& r, Interval ray_t, HitRecord& rec) const = 0;    
 };
 
 #endif

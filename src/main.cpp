@@ -5,8 +5,7 @@
  * hopefully improve the performance of the program. :)
 */
 
-#include "Rtcommon.h"
-#include "Hittable.h"
+#include "Color.h"
 #include "HittableList.h"
 #include "Sphere.h"
 
@@ -22,7 +21,7 @@ output:
 */
 Color rayColor(const Ray& r, const Hittable& world){
     HitRecord rec;
-    if(world.hit(r, 0, INF, rec)){
+    if(world.hit(r, Interval(0, INF), rec)){
         return 0.5 * (rec.normal + Color(1, 1, 1));
     }
 
