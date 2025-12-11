@@ -94,11 +94,11 @@ class Vec3{
 
         //return the sum of vector's values
         double length() const{
-            return std::sqrt(length_squared());
+            return std::sqrt(lengthSquared());
         }        
 
         //return the sum of vector's values squared
-        double length_squared() const{
+        double lengthSquared() const{
             return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; 
         }
 };
@@ -230,7 +230,7 @@ inline Vec3 cross(const Vec3& u, const Vec3& v){
 }
 
 //return the unit vector of v
-inline Vec3 unit_vector(const Vec3& v){
+inline Vec3 unitVector(const Vec3& v){
     return v / v.length();
 }
 

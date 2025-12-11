@@ -39,7 +39,7 @@ class HitRecord{
             True if ray is outside the object (dot product is < 0) or false if
             ray is within the surface of object (dot product is > 0).
         */
-        void set_face_normal(const Ray& r, const Vec3& outward_normal){
+        void setFaceNormal(const Ray& r, const Vec3& outward_normal){
             front_face = dot(r.direction(), outward_normal) < 0;
             normal = front_face ? outward_normal : -outward_normal;
         }

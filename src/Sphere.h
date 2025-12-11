@@ -44,9 +44,9 @@ class Sphere : public Hittable{
                  const override{
             //values for quadratic formula to find ray intersections
             Vec3 oc = center - r.origin();
-            double a = r.direction().length_squared();
+            double a = r.direction().lengthSquared();
             double h = dot(r.direction(), oc);
-            double c = oc.length_squared() - radius * radius;
+            double c = oc.lengthSquared() - radius * radius;
             /*
             if discriminant < 0 no hit detected
             if discriminant = 0 hit is a surface graze (1 point of intersection)

@@ -19,7 +19,7 @@ input:
     out: standard out stream being used
     pixel_color: a Vec3 object containing the rgb values
 */
-void write_color(std::ostream& out, const Color& pixel_color){
+void writeColor(std::ostream& out, const Color& pixel_color){
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();
