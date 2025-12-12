@@ -6,58 +6,26 @@
 */
 
 #include "Color.h"
-#include "Ray.h"
-#include "Vec3.h"
-
-#include <iostream>
-
-/*
-determine if ray "r" is located within a sphere's area in scene and output the
-result of the calculation.
-
-input:
-    center: a point object which is the location of the center of a sphere
-    radius: the distance of the sphere's radius from center
-    r: the ray of light from camera location
-
-output:
-    the resulting value if r is intersecting or is tangent to the area of the 
-    sphere determined using quadratic formula. When discriminant is greater than
-    1 there is an intersection with the sphere object, 0 for when there is a 
-    point of tangency, or negative signifying no intersection.
-*/
-double hit_sphere(const Point3& center, double radius, const Ray& r){
-    Vec3 oc = center - r.origin();
-    double a = r.direction().length_squared();
-    double b = dot(r.direction(), oc);
-    double c = oc.length_squared() - radius * radius;
-    double discriminant = b * b - a * c;
-
-    if(discriminant < 0){
-        return -1.0;
-    }else{
-        return (b - std::sqrt(discriminant)) / a;
-    }
-}
+#include "HittableList.h"
+#include "Sphere.h"
 
 /*
 get a ray color for the specified Ray object you want
 
 input:
     r: a reference to a Ray object
+    world: the 3D space the render is set in
 
 output:
     the ray's color
 */
-Color ray_color(const Ray& r){
-    double t = hit_sphere(Point3(0, 0, -1), 0.5, r);
-
-    if(t > 0.0){
-        Vec3 N = unit_vector(r.at(t) - Vec3(0, 0, -1));
-        return 0.5 * Color(N.x() + 1, N.y() + 1, N.z() + 1);
+Color rayColor(const Ray& r, const Hittable& world){
+    HitRecord rec;
+    if(world.hit(r, Interval(0, INF), rec)){
+        return 0.5 * (rec.normal + Color(1, 1, 1));
     }
 
-    Vec3 unit_direction = unit_vector(r.direction());
+    Vec3 unit_direction = unitVector(r.direction());
     double a = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
 }
@@ -70,6 +38,11 @@ int main(){
     //calculate image height depending on desired aspect ratio
     int image_height = int(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height; 
+
+    //world
+    HittableList world;
+    world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
+    world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
     //camera
     double focal_length = 1.0;
@@ -101,8 +74,8 @@ int main(){
                 pixel_delta_v);
             Vec3 ray_direction = pixel_center - camera_center;
             Ray r = Ray(camera_center, ray_direction);
-            Color pixel_color = ray_color(r);
-            write_color(std::cout, pixel_color);
+            Color pixel_color = rayColor(r, world);
+            writeColor(std::cout, pixel_color);
         }
     }
 

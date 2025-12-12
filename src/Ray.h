@@ -8,11 +8,13 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "vec3.h"
+#include "Vec3.h"
 
 class Ray{
     private:
+        //the origin of the ray
         Point3 orig;
+        //direction where ray is pointing to
         Vec3 dir;
 
     public:
