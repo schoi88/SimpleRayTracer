@@ -40,6 +40,13 @@ class Interval{
             return min < x && max > x;
         }
 
+        //helper to ensure inputted number is within min/max bounds
+        double clamp(double x) const{
+            if(x < min) return min;
+            if(x > max) return max;
+            return x;
+        }
+
         static const Interval empty;
         static const Interval universe;
 };
