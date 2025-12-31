@@ -35,17 +35,20 @@ class Camera{
             the ray's color
         */
         Color rayColor(const Ray& r, int depth, const Hittable& world) const{
+            //if ray bounce depth is exceeded, no more light is gathered
             if(depth <= 0){
                 return Color(0, 0, 0);
             }
             
             HitRecord rec;
 
-            if(world.hit(r, Interval(0, INF), rec)){
-                Vec3 direction = randomOnHemisphere(rec.normal);
-                return 0.5 * rayColor(Ray(rec.p, direction), depth - 1, world);
+            //if ray hits an object, it will bounce and retain 50 percent of its color
+            if(world.hit(r, Interval(0.001, INF), rec)){
+                Vec3 direction = rec.normal + randomUnitVector();
+                return 0.1 * rayColor(Ray(rec.p, direction), depth - 1, world);
             }
 
+            //ray has bounced off world with no more hits 
             Vec3 unit_direction = unitVector(r.direction());
             double a = 0.5 * (unit_direction.y() + 1.0);
             return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
