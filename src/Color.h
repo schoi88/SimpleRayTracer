@@ -13,6 +13,23 @@
 using Color = Vec3;
 
 /*
+transform a color component from linear to gamma color space
+
+input:
+    linear_component: the color component in linear color space
+
+output:
+    the gamma corrected color component
+*/
+inline double linearToGamma(double linear_component){
+    if(linear_component > 0){
+        return std::sqrt(linear_component);
+    }
+
+    return 0;
+}
+
+/*
 write out a single pixel's color using the three values of its vector
 to translate its rgb values.
 
@@ -24,6 +41,11 @@ void writeColor(std::ostream& out, const Color& pixel_color){
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();
+
+    //apply gamma correction
+    r = linearToGamma(r);
+    g = linearToGamma(g);
+    b = linearToGamma(b);
 
     //translate the component values (0-1) to an int range of (0-255)
     static const Interval intensity = Interval(0.000, 0.999);
