@@ -10,33 +10,40 @@
 #include "Color.h"
 #include "MathUtils.h"
 
-const int samples_per_pixel = 100;
-const double pixel_samples_scale = 1.0 / samples_per_pixel;
-
 class Camera{
     private:
-        double aspect_ratio;
-        int image_width;
-        int image_height;
-        Point3 center;
-        Point3 pixel00_loc;
-        Vec3 pixel_delta_u;
-        Vec3 pixel_delta_v;
+        double aspect_ratio;        //ratio of image width over height
+        int image_width;            //rendered image width in pixel count
+        int image_height;           //rendered image height in pixel count
+        Point3 center;              //location of camera center
+        Point3 pixel00_loc;         //location of upper left pixel in image
+        Vec3 pixel_delta_u;         //offset of pixel length
+        Vec3 pixel_delta_v;         //offset of pixel height
+        int samples_per_pixel;      //count of random samples taken for individual pixel
+        double pixel_samples_scale; //color scale factor for a sum of pixel samples
+        int max_depth;              //max number of ray bounces in scene
 
         /*
         get a ray color for the specified Ray object you want
 
         input:
             r: a reference to a Ray object
+            depth: recursion depth for ray bounces
             world: the 3D space the render is set in
 
         output:
             the ray's color
         */
-        Color rayColor(const Ray& r, const Hittable& world) const{
+        Color rayColor(const Ray& r, int depth, const Hittable& world) const{
+            if(depth <= 0){
+                return Color(0, 0, 0);
+            }
+            
             HitRecord rec;
+
             if(world.hit(r, Interval(0, INF), rec)){
-                return 0.5 * (rec.normal + Color(1, 1, 1));
+                Vec3 direction = randomOnHemisphere(rec.normal);
+                return 0.5 * rayColor(Ray(rec.p, direction), depth - 1, world);
             }
 
             Vec3 unit_direction = unitVector(r.direction());
@@ -87,14 +94,23 @@ class Camera{
         input:
             ar: the aspect ratio of image
             iw: image width
+            spp: random samples taken per pixel
+            md: maximum depth for ray bounces
         */
-        Camera(double ar, int iw){
+        Camera(double ar, int iw, int spp, int md){
             aspect_ratio = ar;
             image_width = iw;
+            samples_per_pixel = spp;
+            max_depth = md;
 
+            //initialize image dimensions
             image_height = static_cast<int>(image_width / aspect_ratio);
             image_height = (image_height < 1) ? 1 : image_height;
 
+            //set color scale factor for pixel sample sum
+            pixel_samples_scale = 1.0 / samples_per_pixel;
+
+            //define camera center;
             center = Point3(0, 0, 0);
 
             //viewport dimensions
@@ -128,19 +144,10 @@ class Camera{
 
             for(int h = 0; h < image_height; h++){
                 for(int w = 0; w < image_width; w++){
-                    /*
-                    Point3 pixel_center = pixel00_loc + (w * pixel_delta_u) + 
-                        (h * pixel_delta_v);
-                    Vec3 ray_direction = pixel_center - center;
-                    Ray r = Ray(center, ray_direction);
-
-                    Color pixel_color = rayColor(r, world);
-                    writeColor(std::cout, pixel_color);
-                    */
                     Color pixelColor = Color(0, 0, 0);
                     for(int sample = 0; sample < samples_per_pixel; sample++){
                         Ray r = getRay(w, h);
-                        pixelColor += rayColor(r, world);
+                        pixelColor += rayColor(r, max_depth, world);
                     }
                     writeColor(std::cout, pixel_samples_scale * pixelColor);
                 }
