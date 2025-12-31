@@ -5,6 +5,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "MathUtils.h"
+
 #include <cmath>
 #include <iostream>
 
@@ -101,6 +103,17 @@ class Vec3{
         double lengthSquared() const{
             return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; 
         }
+
+        //return a random vector
+        static Vec3 random(){
+            return Vec3(randomDouble(), randomDouble(), randomDouble());
+        }
+
+        //return a random vector within certain bounds
+        static Vec3 random(double min, double max){
+            return Vec3(randomDouble(min, max), randomDouble(min, max), 
+                randomDouble(min, max));
+        } 
 };
 
 //a Vec3 alias
@@ -232,6 +245,27 @@ inline Vec3 cross(const Vec3& u, const Vec3& v){
 //return the unit vector of v
 inline Vec3 unitVector(const Vec3& v){
     return v / v.length();
+}
+
+//generate a random vector and return itself normalized within unit sphere
+inline Vec3 randomUnitVector(){
+    while(true){
+        Vec3 p = Vec3::random(-1, 1);
+        double lensq = p.lengthSquared();
+        if(1e-160 < lensq && lensq <= 1){
+            return p / sqrt(lensq);
+        }
+    }
+}
+
+//return a random unit vector that is on the same hemisphere as input
+inline Vec3 randomOnHemisphere(const Vec3& normal){
+    Vec3 on_unit_sphere = randomUnitVector();
+    if(dot(on_unit_sphere, normal) > 0.0){
+        return on_unit_sphere;
+    }else{
+        return -on_unit_sphere;
+    }
 }
 
 #endif
