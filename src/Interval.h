@@ -51,7 +51,7 @@ class Interval{
         static const Interval universe;
 };
 
-const Interval Interval::empty = Interval(+INF, -INF);
-const Interval Interval::universe = Interval(-INF, +INF);
+inline const Interval empty = Interval(+INF, -INF);
+inline const Interval universe = Interval(-INF, +INF);
 
 #endif

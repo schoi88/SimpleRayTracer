@@ -11,12 +11,6 @@
 #include "Vec3.h"
 
 class Ray{
-    private:
-        //the origin of the ray
-        Point3 orig;
-        //direction where ray is pointing to
-        Vec3 dir;
-
     public:
         //default constructor
         Ray(){}
@@ -58,6 +52,12 @@ class Ray{
         Point3 at(double t) const{
             return orig + t * dir;
         }
+
+    private:
+        //the origin of the ray
+        Point3 orig;
+        //direction where ray is pointing to
+        Vec3 dir;
 };
 
 #endif

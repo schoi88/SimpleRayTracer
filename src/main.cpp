@@ -6,7 +6,6 @@
 */
 
 #include "Camera.h"
-#include "Color.h"
 #include "HittableList.h"
 #include "Sphere.h"
 
