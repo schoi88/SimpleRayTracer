@@ -8,6 +8,10 @@
 #include "Ray.h"
 #include "Interval.h"
 
+#include <memory>
+
+class Material;
+
 //record object to hold hit data for a ray
 class HitRecord{
     public:
@@ -23,6 +27,7 @@ class HitRecord{
         light will affect objects with different materials like metal or glass.
         */
         bool front_face;
+        std::shared_ptr<Material> mat;
 
         /*
         This function will set the side of the surface a ray is coming from.
