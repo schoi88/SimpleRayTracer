@@ -113,7 +113,18 @@ class Vec3{
         static Vec3 random(double min, double max){
             return Vec3(randomDouble(min, max), randomDouble(min, max), 
                 randomDouble(min, max));
-        } 
+        }
+
+        /*
+        check if this vector's is close enough within margin of error of zero
+        in all directions. Used to check for degenerate random values for when
+        a random vector is needed.
+        */
+        bool nearZero(){
+            double s = 1e-8;
+            return (std::fabs(e[0] < s) && (std::fabs(e[1] < s)) && 
+                   (std::fabs(e[2] < s)));
+        }
 };
 
 //a Vec3 alias
@@ -266,6 +277,20 @@ inline Vec3 randomOnHemisphere(const Vec3& normal){
     }else{
         return -on_unit_sphere;
     }
+}
+
+/*
+return the vector v reflected on a surface n
+
+input:
+    v: the reflected vector
+    n: a unit vector representing the surface of reflection
+
+output:
+    the reflected vector
+*/
+inline Vec3 reflect(const Vec3& v, const Vec3& n){
+    return v - 2 * dot(v, n) * n;
 }
 
 #endif
