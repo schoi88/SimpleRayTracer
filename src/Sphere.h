@@ -8,6 +8,9 @@
 
 #include "Hittable.h"
 #include "Vec3.h"
+#include "Material.h"
+
+#include <memory>
 
 class Sphere : public Hittable{
     public:
@@ -18,7 +21,7 @@ class Sphere : public Hittable{
             center: a Point3 object that is the origin of the sphere
             radius: sphere's radius as a double
         */
-        Sphere(const Point3& center, double radius);
+        Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat);
         
         /*
         Used to calculate if a ray makes contact with a Sphere object.
@@ -40,6 +43,7 @@ class Sphere : public Hittable{
     private:
         Point3 center;
         double radius;
+        std::shared_ptr<Material> mat;
 };
 
 #endif

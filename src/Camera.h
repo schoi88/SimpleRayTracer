@@ -6,9 +6,13 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "Material.h"
 #include "Hittable.h"
 #include "Color.h"
 #include "MathUtils.h"
+
+#include <iostream>
+#include <chrono>
 
 class Camera{
     public:

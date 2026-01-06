@@ -41,6 +41,8 @@ Camera::Camera(double ar, int iw, int spp, int md){
 void Camera::render(const Hittable& world){
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     for(int h = 0; h < image_height; h++){
         for(int w = 0; w < image_width; w++){
             Color pixelColor = Color(0, 0, 0);
@@ -51,6 +53,9 @@ void Camera::render(const Hittable& world){
             writeColor(std::cout, pixel_samples_scale * pixelColor);
         }
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start).count();
+    std::cerr << "runtime: " << duration << " seconds" << std::endl;
 }
 
 Color Camera::rayColor(const Ray& r, int depth, const Hittable& world) const{
@@ -63,8 +68,12 @@ Color Camera::rayColor(const Ray& r, int depth, const Hittable& world) const{
 
     //if ray hits an object, it will bounce and retain 50 percent of its color
     if(world.hit(r, Interval(0.001, INF), rec)){
-        Vec3 direction = rec.normal + randomUnitVector();
-        return 0.1 * rayColor(Ray(rec.p, direction), depth - 1, world);
+        Ray scattered;
+        Color attenuation;
+        if(rec.mat->scatter(r, rec, attenuation, scattered)){
+            return attenuation * rayColor(scattered, depth - 1, world);
+        }
+        return Color(0, 0, 0);
     }
 
     //ray has bounced off world with no more hits 
