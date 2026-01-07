@@ -293,4 +293,28 @@ inline Vec3 reflect(const Vec3& v, const Vec3& n){
     return v - 2 * dot(v, n) * n;
 }
 
+/*
+return a refracted vector given the incident vector and normal surface.
+
+input:
+    uv: the incident vector pointing where the light is coming from
+    n: a surface normal that is perpendicular to uv
+    etai_over_etat: (eta / eta prime) the refractive indices showing the 
+                    change in direction the ray will bend after hitting 
+                    the surface normal
+
+output:
+    the refracted vector
+*/
+inline Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat){
+    //the cosine of the angle between incoming vector and refracted vector
+    double cos_theta = std::fmin(dot(-uv, n), 1.0);
+    //the vector perpendicular to surface normal
+    Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    //the vector parallel to surface normal
+    Vec3 r_out_parallel = -std::sqrt(std::fabs(1.0 - r_out_perp.lengthSquared())) * n;
+    //return the perpendicular vector transformed by the parallel vector
+    return r_out_perp + r_out_parallel;
+}
+
 #endif
