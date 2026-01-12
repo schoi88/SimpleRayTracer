@@ -2,11 +2,15 @@
 
 Camera::Camera(){}
 
-Camera::Camera(double ar, int iw, int spp, int md){
+Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 la, Vec3 vup){
     aspect_ratio = ar;
     image_width = iw;
     samples_per_pixel = spp;
     max_depth = md;
+    vfov = fov;
+    look_from = lf;
+    look_at = la;
+    view_up = vup;
 
     //initialize image dimensions
     image_height = static_cast<int>(image_width / aspect_ratio);
@@ -16,25 +20,31 @@ Camera::Camera(double ar, int iw, int spp, int md){
     pixel_samples_scale = 1.0 / samples_per_pixel;
 
     //define camera center;
-    center = Point3(0, 0, 0);
+    center = look_from;
 
     //viewport dimensions
-    double focal_length = 1.0;
-    double viewport_height = 2.0;
+    double focal_length = (look_from - look_at).length();
+    double theta = degreesToRadians(vfov);
+    double h = std::tan(theta / 2);
+    double viewport_height = 2 * h * focal_length;
     double viewport_width = viewport_height * 
         (static_cast<double>(image_width) / image_height);
 
+    //calculate camera basis vectors from camera coordinates
+    w = unitVector(look_from - look_at);
+    u = unitVector(cross(view_up, w));
+    v = cross(w, u);
+
     //Calculate vectors along horizontal and vertical viewport edges
-    Vec3 viewport_u = Vec3(viewport_width, 0, 0);
-    Vec3 viewport_v = Vec3(0, -viewport_height, 0);
+    Vec3 viewport_u = viewport_width * u;
+    Vec3 viewport_v = viewport_v = viewport_height * -v;
 
     //Calculate horizontal and vertical delta vectors between pixels
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
 
     //Calculate location of upper left pixel
-    Vec3 viewport_upper_left = center - Vec3(0, 0, focal_length) - 
-        viewport_u / 2 - viewport_v / 2;
+    Vec3 viewport_upper_left = center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
     pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 }
 
