@@ -27,8 +27,12 @@ class Camera{
             iw: image width
             spp: random samples taken per pixel
             md: maximum depth for ray bounces
+            fov: the vertical field of view angle
+            lf: the point where camera is looking from
+            la: the point where camera is looking at
+            vup: the upward direction relative to camera's location
         */
-        Camera(double ar, int iw, int spp, int md);
+        Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 lu, Vec3 vup);
 
         /*
         render the image
@@ -49,6 +53,11 @@ class Camera{
         int samples_per_pixel;      //count of random samples taken for individual pixel
         double pixel_samples_scale; //color scale factor for a sum of pixel samples
         int max_depth;              //max number of ray bounces in scene
+        double vfov;                //verticle field of view
+        Vec3 u, v, w;               //camera frame basis vectors
+        Point3 look_from;           //point where camera is looking from
+        Point3 look_at;             //point where camera is looking at
+        Vec3 view_up;               //vector of camera's relative up direction
 
         /*
         get a ray color for the specified Ray object you want
