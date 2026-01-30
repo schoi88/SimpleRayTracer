@@ -2,7 +2,8 @@
 
 Camera::Camera(){}
 
-Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 la, Vec3 vup){
+Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 la, Vec3 vup, 
+               double da, double fd){
     aspect_ratio = ar;
     image_width = iw;
     samples_per_pixel = spp;
@@ -11,6 +12,8 @@ Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3
     look_from = lf;
     look_at = la;
     view_up = vup;
+    defocus_angle = da;
+    focus_dist = fd;
 
     //initialize image dimensions
     image_height = static_cast<int>(image_width / aspect_ratio);
@@ -23,10 +26,9 @@ Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3
     center = look_from;
 
     //viewport dimensions
-    double focal_length = (look_from - look_at).length();
     double theta = degreesToRadians(vfov);
     double h = std::tan(theta / 2);
-    double viewport_height = 2 * h * focal_length;
+    double viewport_height = 2 * h * focus_dist;
     double viewport_width = viewport_height * 
         (static_cast<double>(image_width) / image_height);
 
@@ -44,8 +46,13 @@ Camera::Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3
     pixel_delta_v = viewport_v / image_height;
 
     //Calculate location of upper left pixel
-    Vec3 viewport_upper_left = center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
+    Vec3 viewport_upper_left = center - (focus_dist * w) - viewport_u / 2 - viewport_v / 2;
     pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+    //Calculate camera defocus disk basis vectors
+    double defocus_radius = focus_dist * std::tan(degreesToRadians(defocus_angle / 2));
+    defocus_disk_u = u * defocus_radius;
+    defocus_disk_v = v * defocus_radius;
 }
 
 void Camera::render(const Hittable& world){
@@ -97,7 +104,7 @@ Ray Camera::getRay(int x, int y) const{
     Vec3 pixel_sample = pixel00_loc + ((x + offset.x()) * pixel_delta_u) +
         ((y + offset.y()) * pixel_delta_v);
     
-    Point3 ray_origin = center;
+    Point3 ray_origin = (defocus_angle <= 0) ? center : defocusDiskSample();
     Vec3 ray_direction = pixel_sample - ray_origin;
 
     return Ray(ray_origin, ray_direction);
@@ -105,4 +112,9 @@ Ray Camera::getRay(int x, int y) const{
 
 Vec3 Camera::sampleSquare() const{
     return Vec3(randomDouble() - 0.5, randomDouble() - 0.5, 0);
+}
+
+Point3 Camera::defocusDiskSample() const {
+    Point3 p = randomInUnitDisk();
+    return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
 }
