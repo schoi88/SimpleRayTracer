@@ -258,6 +258,16 @@ inline Vec3 unitVector(const Vec3& v){
     return v / v.length();
 }
 
+//generate a random point within a unit circle
+inline Vec3 randomInUnitDisk(){
+    while(true){
+        Vec3 p = Vec3(randomDouble(-1, 1), randomDouble(-1, 1), 0);
+        if(p.lengthSquared() < 1){
+            return p;
+        }
+    }
+}
+
 //generate a random vector and return itself normalized within unit sphere
 inline Vec3 randomUnitVector(){
     while(true){
