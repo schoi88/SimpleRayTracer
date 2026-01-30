@@ -31,8 +31,11 @@ class Camera{
             lf: the point where camera is looking from
             la: the point where camera is looking at
             vup: the upward direction relative to camera's location
+            da: angle of defocus for rays through each pixel
+            fd: distance from camera lookfrom point to have perfect focus
         */
-        Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 lu, Vec3 vup);
+        Camera(double ar, int iw, int spp, int md, double fov, Point3 lf, Point3 lu, Vec3 vup,
+               double da, double fd);
 
         /*
         render the image
@@ -58,6 +61,10 @@ class Camera{
         Point3 look_from;           //point where camera is looking from
         Point3 look_at;             //point where camera is looking at
         Vec3 view_up;               //vector of camera's relative up direction
+        double defocus_angle;       //variation angle of rays through each pixel
+        double focus_dist;          //distance from camera look_from to plane being focused
+        Vec3 defocus_disk_u;        //horizontal radius of defocus disk
+        Vec3 defocus_disk_v;        //vertical radius of defocus disk
 
         /*
         get a ray color for the specified Ray object you want
@@ -93,6 +100,14 @@ class Camera{
             randomly directed vector
         */
         Vec3 sampleSquare() const;
+
+        /*
+        Return a random point on camera's defocus disk.
+
+        output:
+            point on camera defocus disk
+        */
+        Point3 defocusDiskSample() const;
 };
 
 #endif
